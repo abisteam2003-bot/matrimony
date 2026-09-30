@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgG2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D5A27" />
+      <stop offset="100%" stop-color="#143610" />
+    </linearGradient>
+    <linearGradient id="goldG2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE08B" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA771C" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bgG2)" rx="100"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldG2)" stroke-width="3"/>
+  <g>
+    <circle cx="100" cy="74" r="34" fill="#F5CBA7"/>
+    <path d="M68 68 C 65 35, 135 35, 132 68 C 128 52, 72 52, 68 68 Z" fill="#212121"/>
+    <!-- Well trimmed beard -->
+    <path d="M72 78 C 72 108, 128 108, 128 78 C 120 100, 80 100, 72 78 Z" fill="#212121"/>
+    <!-- Silk Jubba / Kurta with Gold zari -->
+    <path d="M42 178 C 42 128, 70 118, 100 118 C 130 118, 158 128, 158 178 Z" fill="#FDFEFE"/>
+    <path d="M96 118 L 96 178" stroke="url(#goldG2)" stroke-width="4"/>
+    <circle cx="100" cy="132" r="3" fill="#800020"/>
+    <circle cx="100" cy="148" r="3" fill="#800020"/>
+    <circle cx="100" cy="164" r="3" fill="#800020"/>
+  </g>
+</svg>

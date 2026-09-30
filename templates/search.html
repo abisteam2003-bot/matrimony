@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('search_page_title') }} | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <h1 class="h3 fw-bold text-danger">{{ t('search_page_title') }}</h1>
+        <p class="text-muted small m-0">{{ t('search_page_subtitle') }}</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Search Filters Sidebar (Desktop) / Accordion (Mobile) -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 sticky-lg-top" style="top: 90px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold m-0"><i class="bi bi-funnel-fill text-danger me-2"></i> Filters</h5>
+                    <a href="{{ url_for('search.search') }}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                        {{ t('btn_reset') }}
+                    </a>
+                </div>
+
+                <form action="{{ url_for('search.search') }}" method="GET" id="search-filter-form">
+                    <!-- Bride / Groom -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_bride_groom') }}</label>
+                        <select name="profile_type" class="form-select form-select-sm">
+                            <option value="">{{ t('filter_bride_groom') }} (All)</option>
+                            <option value="bride" {% if current_filters.get('profile_type') == 'bride' %}selected{% endif %}>{{ t('bride') }}</option>
+                            <option value="groom" {% if current_filters.get('profile_type') == 'groom' %}selected{% endif %}>{{ t('groom') }}</option>
+                        </select>
+                    </div>
+
+                    <!-- Income Category (Crucial requirement) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-danger">{{ t('filter_income_category') }}</label>
+                        <select name="income_category" class="form-select form-select-sm">
+                            <option value="">All Categories</option>
+                            {% for cat in income_categories %}
+                                <option value="{{ cat.name }}" {% if current_filters.get('income_category') == cat.name %}selected{% endif %}>
+                                    {{ cat.name }} ({{ cat.name_tamil }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Age Range -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small">{{ t('filter_age') }} Min</label>
+                            <input type="number" name="age_from" class="form-control form-control-sm" placeholder="18" value="{{ current_filters.get('age_from', '') }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small">{{ t('filter_age') }} Max</label>
+                            <input type="number" name="age_to" class="form-control form-control-sm" placeholder="45" value="{{ current_filters.get('age_to', '') }}">
+                        </div>
+                    </div>
+
+                    <!-- Marital Status -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_marital_status') }}</label>
+                        <select name="marital_status" class="form-select form-select-sm">
+                            <option value="">Any Status</option>
+                            <option value="Never Married" {% if current_filters.get('marital_status') == 'Never Married' %}selected{% endif %}>{{ t('never_married') }}</option>
+                            <option value="Divorced" {% if current_filters.get('marital_status') == 'Divorced' %}selected{% endif %}>{{ t('divorced') }}</option>
+                            <option value="Widowed" {% if current_filters.get('marital_status') == 'Widowed' %}selected{% endif %}>{{ t('widowed') }}</option>
+                        </select>
+                    </div>
+
+                    <!-- Religion & Community -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_religion') }}</label>
+                        <select name="religion" class="form-select form-select-sm">
+                            <option value="">Any Religion</option>
+                            {% for rel in religions %}
+                                <option value="{{ rel }}" {% if current_filters.get('religion') == rel %}selected{% endif %}>{{ rel }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_community') }}</label>
+                        <select name="community" class="form-select form-select-sm">
+                            <option value="">Any Community</option>
+                            {% for com in communities %}
+                                <option value="{{ com }}" {% if current_filters.get('community') == com %}selected{% endif %}>{{ com }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Education & Occupation -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_education') }}</label>
+                        <input type="text" name="education" class="form-control form-control-sm" placeholder="e.g. B.Tech, MBBS, CA" value="{{ current_filters.get('education', '') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_occupation') }}</label>
+                        <input type="text" name="occupation" class="form-control form-control-sm" placeholder="e.g. Engineer, Doctor" value="{{ current_filters.get('occupation', '') }}">
+                    </div>
+
+                    <!-- Location: City -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_city') }}</label>
+                        <input type="text" name="city" class="form-control form-control-sm" placeholder="e.g. Chennai, Madurai" value="{{ current_filters.get('city', '') }}">
+                    </div>
+
+                    <!-- Dosham -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('filter_dosham') }}</label>
+                        <select name="dosham" class="form-select form-select-sm">
+                            <option value="">Any</option>
+                            <option value="No Dosham" {% if current_filters.get('dosham') == 'No Dosham' %}selected{% endif %}>{{ t('no_dosham') }}</option>
+                            <option value="Chevvai Dosham" {% if current_filters.get('dosham') == 'Chevvai Dosham' %}selected{% endif %}>{{ t('chevvai_dosham') }}</option>
+                            <option value="Rahu-Ketu Dosham" {% if current_filters.get('dosham') == 'Rahu-Ketu Dosham' %}selected{% endif %}>{{ t('rahu_ketu_dosham') }}</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-premium-primary w-100 py-2">
+                        <i class="bi bi-search"></i> {{ t('btn_search') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Profiles Results Column -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fw-bold text-muted small">
+                    <i class="bi bi-person-lines-fill text-danger me-1"></i>
+                    {{ total_count }} {{ t('profiles_found') }}
+                </span>
+                {% if current_filters.get('income_category') %}
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                    <i class="bi bi-wallet2 me-1"></i> {{ current_filters.get('income_category') }}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if profiles %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                {% for profile in profiles %}
+                <div class="col">
+                    <div class="profile-card">
+                        <div class="profile-img-wrapper">
+                            <img src="{{ profile.primary_photo }}" alt="{{ profile.full_name }}" loading="lazy">
+                            <span class="profile-badge-verified">
+                                <i class="bi bi-patch-check-fill"></i> {{ t('verified_badge') }}
+                            </span>
+                            <span class="profile-badge-id">
+                                {{ t('profile_id_label') }}: {{ profile.profile_id }}
+                            </span>
+                            {% if profile.income_details %}
+                            <span class="profile-badge-income">
+                                <i class="bi bi-wallet2 me-1"></i> {{ profile.income_details.income_category }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="profile-card-body">
+                            <h3 class="profile-name">{{ profile.full_name }}</h3>
+                            <div class="profile-meta-text">
+                                {{ profile.age }} Yrs, {{ profile.personal_details.height if profile.personal_details and profile.personal_details.height else '5 ft 6 in' }}
+                            </div>
+
+                            <ul class="profile-details-list">
+                                <li>
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span class="text-truncate">{{ profile.education_details.qualification if profile.education_details else 'Degree' }}</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-briefcase"></i>
+                                    <span class="text-truncate">{{ profile.career_details.job if profile.career_details else 'Corporate' }}</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>{{ profile.address.city if profile.address else 'Tamil Nadu' }}</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-people"></i>
+                                    <span>{{ profile.personal_details.community if profile.personal_details and profile.personal_details.community else 'Tamil Community' }}</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-moon-stars"></i>
+                                    <span>{{ profile.horoscope_details.rasi if profile.horoscope_details and profile.horoscope_details.rasi else 'Rasi' }} - {{ profile.horoscope_details.nakshatra if profile.horoscope_details and profile.horoscope_details.nakshatra else '' }}</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="profile-card-footer">
+                            <a href="{{ url_for('profile.view_profile', profile_id=profile.profile_id) }}" class="btn btn-premium-primary btn-sm flex-grow-1">
+                                <i class="bi bi-eye"></i> {{ t('card_view_profile') }}
+                            </a>
+                            
+                            <!-- Shortlist Toggle Button -->
+                            <button type="button" 
+                                    class="btn {% if profile.id in shortlisted_ids %}btn-danger{% else %}btn-outline-secondary{% endif %} btn-sm btn-shortlist-toggle" 
+                                    data-profile-id="{{ profile.id }}" 
+                                    title="{{ t('card_shortlist') }}">
+                                <i class="bi {% if profile.id in shortlisted_ids %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                            </button>
+                            
+                            <!-- Send Interest Button -->
+                            <button type="button" 
+                                    class="btn {% if profile.id in interest_sent_ids %}btn-secondary{% else %}btn-outline-danger{% endif %} btn-sm btn-send-interest" 
+                                    data-profile-id="{{ profile.id }}" 
+                                    {% if profile.id in interest_sent_ids %}disabled{% endif %}
+                                    title="{{ t('card_send_interest') }}">
+                                <i class="bi {% if profile.id in interest_sent_ids %}bi-check2-circle{% else %}bi-send{% endif %}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+                <i class="bi bi-search fs-1 text-danger mb-3"></i>
+                <h4 class="fw-bold">{{ t('no_profiles_found') }}</h4>
+                <div class="mt-3">
+                    <a href="{{ url_for('search.search') }}" class="btn btn-premium-secondary">
+                        <i class="bi bi-arrow-clockwise me-1"></i> {{ t('btn_reset') }}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

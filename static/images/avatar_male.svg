@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#800020" />
+      <stop offset="100%" stop-color="#4A0013" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE08B" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA771C" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bgGrad)" rx="100"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldGrad)" stroke-width="3"/>
+  <g fill="#FFFFFF" opacity="0.9">
+    <!-- Head -->
+    <circle cx="100" cy="75" r="35" fill="#FAD7A0"/>
+    <!-- Hair -->
+    <path d="M68 70 C 68 35, 132 35, 132 70 C 130 52, 70 52, 68 70 Z" fill="#2C3E50"/>
+    <!-- Tilak / Vibhuti -->
+    <rect x="94" y="60" width="12" height="3" fill="#FFFFFF" rx="1"/>
+    <circle cx="100" cy="67" r="2" fill="#C0392B"/>
+    <!-- Shoulders & Kurta / Veshti -->
+    <path d="M45 175 C 45 130, 70 120, 100 120 C 130 120, 155 130, 155 175 Z" fill="#FFFFFF"/>
+    <!-- Angavastram (Silk Shawl) with Gold border -->
+    <path d="M60 124 Q 75 145 90 175 L 110 175 Q 90 140 78 122 Z" fill="#800020"/>
+    <path d="M74 122 L 86 175" stroke="url(#goldGrad)" stroke-width="2"/>
+  </g>
+</svg>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('dash_privacy_settings') }} | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                    <div class="income-cat-icon m-0 bg-danger bg-opacity-10 text-danger border-danger">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <div>
+                        <h1 class="h4 fw-bold text-danger m-0">{{ t('dash_privacy_settings') }}</h1>
+                        <p class="text-muted small m-0">Control what other members and public visitors can view.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('dashboard.privacy') }}">
+                    <!-- Income Privacy -->
+                    <div class="card p-3 border rounded-4 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input fs-5" type="checkbox" name="hide_exact_income" id="hide-exact-income" {% if privacy.hide_exact_income %}checked{% endif %}>
+                            <label class="form-check-label fw-bold" for="hide-exact-income">
+                                {{ t('privacy_income_title') }}
+                            </label>
+                        </div>
+                        <p class="text-muted small mt-1 mb-0 ps-4">
+                            {{ t('privacy_income_desc') }}
+                        </p>
+                    </div>
+
+                    <!-- Contact Privacy -->
+                    <div class="card p-3 border rounded-4 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input fs-5" type="checkbox" name="hide_mobile" id="hide-mobile" {% if privacy.hide_mobile %}checked{% endif %}>
+                            <label class="form-check-label fw-bold" for="hide-mobile">
+                                {{ t('privacy_contact_title') }}
+                            </label>
+                        </div>
+                        <p class="text-muted small mt-1 mb-0 ps-4">
+                            {{ t('privacy_contact_desc') }}
+                        </p>
+                    </div>
+
+                    <!-- Photo Visibility -->
+                    <div class="card p-3 border rounded-4 mb-4">
+                        <label class="form-label fw-bold mb-2">{{ t('privacy_photo_title') }}</label>
+                        <select name="photo_visibility" class="form-select">
+                            <option value="all" {% if privacy.photo_visibility == 'all' %}selected{% endif %}>{{ t('privacy_photo_all') }}</option>
+                            <option value="members_only" {% if privacy.photo_visibility == 'members_only' %}selected{% endif %}>{{ t('privacy_photo_members') }}</option>
+                            <option value="on_request" {% if privacy.photo_visibility == 'on_request' %}selected{% endif %}>{{ t('privacy_photo_request') }}</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-premium-primary px-5 py-3">
+                        <i class="bi bi-check2-circle me-1"></i> {{ t('btn_save') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

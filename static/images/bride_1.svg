@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgB1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7D3C98" />
+      <stop offset="100%" stop-color="#4A235A" />
+    </linearGradient>
+    <linearGradient id="goldB1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE08B" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA771C" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bgB1)" rx="100"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldB1)" stroke-width="3"/>
+  <g>
+    <!-- Long hair & side braid -->
+    <circle cx="100" cy="65" r="40" fill="#1C2833"/>
+    <path d="M60 70 Q 100 45 140 70" stroke="#FFF9C4" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="2,6"/>
+    <circle cx="100" cy="76" r="32" fill="#F8C471"/>
+    <!-- Sleek hair -->
+    <path d="M72 72 Q 100 62 100 78 Q 100 62 128 72 C 125 50, 75 50, 72 72 Z" fill="#1C2833"/>
+    <circle cx="100" cy="72" r="2.8" fill="#C0392B"/>
+    <circle cx="68" cy="80" r="3.5" fill="url(#goldB1)"/>
+    <circle cx="132" cy="80" r="3.5" fill="url(#goldB1)"/>
+    <!-- Medical coat / Green Silk Saree -->
+    <path d="M42 178 C 42 128, 70 120, 100 120 C 130 120, 158 128, 158 178 Z" fill="#1E8449"/>
+    <!-- Gold Border & Stethoscope / Necklace -->
+    <path d="M70 120 Q 95 145 120 178 L 140 178 Q 110 135 85 120 Z" fill="#B03A2E"/>
+    <path d="M85 120 L 140 178" stroke="url(#goldB1)" stroke-width="3.5"/>
+    <path d="M84 122 Q 100 136 116 122" stroke="url(#goldB1)" stroke-width="2.5" fill="none"/>
+  </g>
+</svg>

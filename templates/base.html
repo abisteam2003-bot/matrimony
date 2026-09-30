@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ t('nav_brand') }} | {{ t('nav_tagline') }}{% endblock %}</title>
+    
+    <!-- Google Fonts: Mukta & Noto Sans Tamil for pristine bilingual typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+
+    <!-- Custom Premium Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Announcement & Language Switcher Bar -->
+    <div class="top-announcement-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-shield-check text-warning me-1"></i> 100% Verified Profiles</span>
+                <span class="d-none d-md-inline"><i class="bi bi-telephone text-warning me-1"></i> Helpline: +91 98400 12345</span>
+            </div>
+            
+            <!-- Language Switcher Positioned in Top Navigation -->
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ url_for('set_language', lang_code='ta' if current_lang == 'en' else 'en') }}" 
+                   class="lang-switcher-btn" 
+                   title="Change Language / மொழியை மாற்ற">
+                    <i class="bi bi-translate"></i>
+                    <span class="d-none d-md-inline">{{ t('language_display_desktop') }}</span>
+                    <span class="d-inline d-md-none">{{ t('language_display_mobile') }}</span>
+                    <span class="badge bg-danger ms-1 text-uppercase">{{ current_lang }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg main-navbar">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand brand-logo-container" href="{{ url_for('index') }}">
+                <div class="brand-icon">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>{{ t('nav_brand') }}</h1>
+                    <span>{{ t('nav_tagline') }}</span>
+                </div>
+            </a>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMainContent" aria-controls="navbarMainContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list fs-1 text-danger"></i>
+            </button>
+
+            <!-- Nav Links -->
+            <div class="collapse navbar-collapse" id="navbarMainContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="bi bi-house-door me-1"></i> {{ t('nav_home') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'search.search' %}active{% endif %}" href="{{ url_for('search.search') }}">
+                            <i class="bi bi-search me-1"></i> {{ t('nav_search') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'search.income_categories_page' %}active{% endif %}" href="{{ url_for('search.income_categories_page') }}">
+                            <i class="bi bi-currency-rupee me-1"></i> {{ t('nav_income_categories') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'how_it_works' %}active{% endif %}" href="{{ url_for('how_it_works') }}">
+                            <i class="bi bi-info-circle me-1"></i> {{ t('nav_how_it_works') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="{{ url_for('about') }}">
+                            <i class="bi bi-people me-1"></i> {{ t('nav_about') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
+                            <i class="bi bi-envelope me-1"></i> {{ t('nav_contact') }}
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Auth / Dashboard Controls -->
+                <div class="d-flex align-items-center gap-2">
+                    {% if session.get('user_id') %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-danger dropdown-toggle rounded-pill px-3 py-2 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i> {{ session.get('user_name', 'Member') }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" href="{{ url_for('dashboard.overview') }}">
+                                        <i class="bi bi-speedometer2 text-danger me-2"></i> {{ t('nav_dashboard') }}
+                                    </a>
+                                </li>
+                                {% if session.get('profile_id') %}
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" href="{{ url_for('profile.view_profile', profile_id=session.get('profile_id')) }}">
+                                        <i class="bi bi-person-lines-fill text-danger me-2"></i> {{ t('nav_my_profile') }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" href="{{ url_for('dashboard.shortlists') }}">
+                                        <i class="bi bi-heart text-danger me-2"></i> {{ t('dash_shortlist') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" href="{{ url_for('dashboard.interests') }}">
+                                        <i class="bi bi-send text-danger me-2"></i> {{ t('dash_interest_sent') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" href="{{ url_for('dashboard.privacy') }}">
+                                        <i class="bi bi-shield-lock text-danger me-2"></i> {{ t('dash_privacy_settings') }}
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold text-danger" href="{{ url_for('auth.logout') }}">
+                                        <i class="bi bi-box-arrow-right me-2"></i> {{ t('nav_logout') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-premium-secondary py-2 px-3">
+                            <i class="bi bi-box-arrow-in-right"></i> {{ t('nav_login') }}
+                        </a>
+                        <a href="{{ url_for('register.wizard') }}" class="btn btn-premium-primary py-2 px-4">
+                            <i class="bi bi-person-plus"></i> {{ t('nav_register') }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Page Content Block -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Mobile Sticky Bottom Navigation Bar -->
+    <div class="mobile-bottom-nav">
+        <a href="{{ url_for('index') }}" class="mobile-nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+            <i class="bi bi-house"></i>
+            <span>{{ t('nav_home') }}</span>
+        </a>
+        <a href="{{ url_for('search.search') }}" class="mobile-nav-item {% if request.endpoint == 'search.search' %}active{% endif %}">
+            <i class="bi bi-search"></i>
+            <span>{{ t('nav_search') }}</span>
+        </a>
+        <a href="{{ url_for('search.income_categories_page') }}" class="mobile-nav-item {% if request.endpoint == 'search.income_categories_page' %}active{% endif %}">
+            <i class="bi bi-currency-rupee"></i>
+            <span>{{ t('nav_income_categories') }}</span>
+        </a>
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('dashboard.overview') }}" class="mobile-nav-item {% if 'dashboard' in request.endpoint %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>{{ t('nav_dashboard') }}</span>
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="mobile-nav-item {% if request.endpoint == 'auth.login' %}active{% endif %}">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>{{ t('nav_login') }}</span>
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="brand-logo-container mb-3">
+                        <div class="brand-icon">
+                            <i class="bi bi-gem"></i>
+                        </div>
+                        <div class="brand-text">
+                            <h2 class="h4 text-white m-0">{{ t('nav_brand') }}</h2>
+                            <span>{{ t('nav_tagline') }}</span>
+                        </div>
+                    </div>
+                    <p class="text-light-emphasis small">{{ t('footer_about_text') }}</p>
+                    <div class="d-flex gap-3 fs-5 mt-3">
+                        <a href="#" class="text-warning"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-warning"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-warning"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="text-warning"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h5>{{ t('footer_quick_links') }}</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">{{ t('nav_home') }}</a></li>
+                        <li><a href="{{ url_for('search.search') }}">{{ t('nav_search') }}</a></li>
+                        <li><a href="{{ url_for('search.income_categories_page') }}">{{ t('nav_income_categories') }}</a></li>
+                        <li><a href="{{ url_for('how_it_works') }}">{{ t('nav_how_it_works') }}</a></li>
+                        <li><a href="{{ url_for('register.wizard') }}">{{ t('nav_register') }}</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h5>{{ t('income_category_title') }}</h5>
+                    <ul class="footer-links">
+                        {% for cat in income_categories_global[:5] %}
+                            <li><a href="{{ url_for('search.search', income_category=cat.name) }}">{{ cat.name }} ({{ cat.name_tamil }})</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5>{{ t('nav_contact') }}</h5>
+                    <p class="small text-light-emphasis mb-2"><i class="bi bi-geo-alt text-warning me-2"></i> Anna Salai, Chennai, Tamil Nadu - 600002</p>
+                    <p class="small text-light-emphasis mb-2"><i class="bi bi-envelope text-warning me-2"></i> support@matromani.com</p>
+                    <p class="small text-light-emphasis mb-3"><i class="bi bi-telephone text-warning me-2"></i> +91 98400 12345</p>
+                    <div class="p-2 rounded bg-dark border border-secondary small">
+                        <a href="{{ url_for('admin.login') }}" class="text-warning"><i class="bi bi-shield-lock me-1"></i> {{ t('nav_admin') }}</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <div>&copy; 2026 {{ t('nav_brand') }}. {{ t('footer_copyright') }}</div>
+                <div><a href="#" class="text-secondary">{{ t('footer_legal') }}</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Global App JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

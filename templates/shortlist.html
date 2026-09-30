@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('dash_shortlist') }} | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-danger m-0">{{ t('dash_shortlist') }}</h1>
+            <p class="text-muted small m-0">{{ profiles|length }} {{ t('profiles_found') }}</p>
+        </div>
+        <a href="{{ url_for('search.search') }}" class="btn btn-premium-secondary btn-sm">
+            <i class="bi bi-search me-1"></i> {{ t('dash_search_matches') }}
+        </a>
+    </div>
+
+    {% if profiles %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for profile in profiles %}
+        <div class="col">
+            <div class="profile-card">
+                <div class="profile-img-wrapper">
+                    <img src="{{ profile.primary_photo }}" alt="{{ profile.full_name }}">
+                    <span class="profile-badge-verified"><i class="bi bi-patch-check-fill"></i> {{ t('verified_badge') }}</span>
+                    {% if profile.income_details %}
+                    <span class="profile-badge-income">{{ profile.income_details.income_category }}</span>
+                    {% endif %}
+                </div>
+                <div class="profile-card-body">
+                    <h3 class="profile-name">{{ profile.full_name }}</h3>
+                    <div class="profile-meta-text">{{ profile.age }} Yrs, {{ profile.address.city if profile.address else 'Tamil Nadu' }}</div>
+                    <p class="small text-muted">{{ profile.career_details.job if profile.career_details else '' }}</p>
+                </div>
+                <div class="profile-card-footer">
+                    <a href="{{ url_for('profile.view_profile', profile_id=profile.profile_id) }}" class="btn btn-premium-primary btn-sm flex-grow-1">
+                        {{ t('card_view_profile') }}
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm btn-shortlist-toggle" data-profile-id="{{ profile.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+        <i class="bi bi-heartbreak fs-1 text-danger mb-3"></i>
+        <h4 class="fw-bold">No Shortlisted Profiles Yet</h4>
+        <p class="text-muted small">Explore matches and click the heart icon to save your preferred profiles here.</p>
+        <div class="mt-2">
+            <a href="{{ url_for('search.search') }}" class="btn btn-premium-primary">
+                {{ t('dash_search_matches') }}
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

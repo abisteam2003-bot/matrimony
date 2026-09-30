@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('nav_brand') }} - {{ t('hero_title') }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Pattern Overlay -->
+<section class="hero-section">
+    <div class="hero-pattern-overlay"></div>
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-badge">
+                    <i class="bi bi-patch-check-fill"></i>
+                    <span>#1 Trusted Tamil Matrimony</span>
+                </div>
+                <h1 class="hero-title">{{ t('hero_title') }}</h1>
+                <p class="hero-subtitle">{{ t('hero_subtitle') }}</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a href="{{ url_for('search.search') }}" class="btn btn-gold px-4 py-3 fs-6">
+                        <i class="bi bi-search"></i> {{ t('btn_find_match') }}
+                    </a>
+                    <a href="{{ url_for('register.wizard') }}" class="btn btn-outline-light px-4 py-3 fs-6 rounded-3 fw-bold" style="min-height: 48px;">
+                        <i class="bi bi-person-plus-fill"></i> {{ t('btn_register_free') }}
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="d-flex flex-wrap align-items-center gap-4 mt-5 pt-3 border-top border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
+                        <span class="small text-light">100% Privacy Protected</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-star-fill text-warning fs-4"></i>
+                        <span class="small text-light">Vedic Horoscope Matching</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-warning fs-4"></i>
+                        <span class="small text-light">Verified Mobile & ID</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Search Card on Hero -->
+            <div class="col-lg-5">
+                <div class="hero-quick-search-card">
+                    <h3>
+                        <i class="bi bi-sliders"></i>
+                        {{ t('search_page_title') }}
+                    </h3>
+                    <form action="{{ url_for('search.search') }}" method="GET">
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('looking_for') }}</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="profile_type" id="type-bride" value="bride" checked>
+                                    <label class="btn btn-outline-danger w-100 fw-bold" for="type-bride">
+                                        <i class="bi bi-gender-female me-1"></i> {{ t('bride') }}
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="profile_type" id="type-groom" value="groom">
+                                    <label class="btn btn-outline-danger w-100 fw-bold" for="type-groom">
+                                        <i class="bi bi-gender-male me-1"></i> {{ t('groom') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">{{ t('age') }} {{ t('from') }}</label>
+                                <select name="age_from" class="form-select">
+                                    {% for a in range(18, 45) %}
+                                        <option value="{{ a }}" {% if a == 21 %}selected{% endif %}>{{ a }} Yrs</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">{{ t('age') }} {{ t('to') }}</label>
+                                <select name="age_to" class="form-select">
+                                    {% for a in range(18, 55) %}
+                                        <option value="{{ a }}" {% if a == 32 %}selected{% endif %}>{{ a }} Yrs</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('filter_income_category') }}</label>
+                            <select name="income_category" class="form-select">
+                                <option value="">{{ t('income_category_title') }} (All)</option>
+                                {% for cat in income_categories_global %}
+                                    <option value="{{ cat.name }}">{{ cat.name }} ({{ cat.name_tamil }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-premium-primary w-100 py-3 mt-2">
+                            <i class="bi bi-search"></i> {{ t('search_now') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Income Category Section (Prompt requirement) -->
+<section class="py-5 bg-white border-bottom">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-3 py-2 rounded-pill mb-2">
+                <i class="bi bi-graph-up-arrow me-1"></i> Categorized by Financial Stability
+            </span>
+            <h2 class="display-6 fw-bold text-danger">{{ t('income_category_title') }}</h2>
+            <p class="text-muted">{{ t('income_category_subtitle') }}</p>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            {% for cat in income_categories %}
+            <div class="col">
+                <div class="income-category-card">
+                    <div>
+                        <div class="income-cat-icon">
+                            <i class="bi bi-currency-rupee"></i>
+                        </div>
+                        <div class="income-cat-title">{{ cat.name }}</div>
+                        <div class="income-cat-tamil">{{ cat.name_tamil }}</div>
+                        <span class="income-cat-badge">
+                            <i class="bi bi-people-fill me-1"></i> {{ cat.count }} {{ t('profiles_found') }}
+                        </span>
+                    </div>
+                    <a href="{{ url_for('search.search', income_category=cat.name) }}" class="btn btn-premium-secondary btn-sm w-100 mt-2">
+                        {{ t('view_profiles') }} <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Profiles Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-2 rounded-pill mb-2">
+                    <i class="bi bi-stars me-1"></i> Handpicked & Verified
+                </span>
+                <h2 class="h3 fw-bold text-dark mb-1">
+                    {% if current_lang == 'ta' %}சிறப்புத் திருமண சுயவிவரங்கள்{% else %}Featured Matrimonial Profiles{% endif %}
+                </h2>
+                <p class="text-muted small m-0">
+                    {% if current_lang == 'ta' %}சமீபத்தில் சரிபார்க்கப்பட்ட மணமகள் மற்றும் மணமகன் சுயவிவரங்கள்{% else %}Recently verified and active profiles{% endif %}
+                </p>
+            </div>
+            <a href="{{ url_for('search.search') }}" class="btn btn-premium-secondary">
+                {{ t('search_page_title') }} <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for profile in featured_profiles %}
+            <div class="col">
+                <div class="profile-card">
+                    <div class="profile-img-wrapper">
+                        <img src="{{ profile.primary_photo }}" alt="{{ profile.full_name }}" loading="lazy">
+                        <span class="profile-badge-verified">
+                            <i class="bi bi-patch-check-fill"></i> {{ t('verified_badge') }}
+                        </span>
+                        <span class="profile-badge-id">
+                            {{ t('profile_id_label') }}: {{ profile.profile_id }}
+                        </span>
+                        {% if profile.income_details %}
+                        <span class="profile-badge-income">
+                            <i class="bi bi-wallet2 me-1"></i> {{ profile.income_details.income_category }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-card-body">
+                        <h3 class="profile-name">{{ profile.full_name }}</h3>
+                        <div class="profile-meta-text">
+                            {{ profile.age }} Yrs, {{ profile.personal_details.height if profile.personal_details and profile.personal_details.height else '5 ft 6 in' }}
+                        </div>
+
+                        <ul class="profile-details-list">
+                            <li>
+                                <i class="bi bi-mortarboard"></i>
+                                <span class="text-truncate">{{ profile.education_details.qualification if profile.education_details else 'Professional Degree' }}</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-briefcase"></i>
+                                <span class="text-truncate">{{ profile.career_details.job if profile.career_details else 'Corporate Professional' }}</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-geo-alt"></i>
+                                <span>{{ profile.address.city if profile.address else 'Tamil Nadu' }}</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-people"></i>
+                                <span>{{ profile.personal_details.community if profile.personal_details and profile.personal_details.community else 'Tamil Community' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="profile-card-footer">
+                        <a href="{{ url_for('profile.view_profile', profile_id=profile.profile_id) }}" class="btn btn-premium-primary btn-sm flex-grow-1">
+                            <i class="bi bi-eye"></i> {{ t('card_view_profile') }}
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-shortlist-toggle" data-profile-id="{{ profile.id }}" title="{{ t('card_shortlist') }}">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-send-interest" data-profile-id="{{ profile.id }}" title="{{ t('card_send_interest') }}">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Trust & Features Section -->
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-danger">
+                {% if current_lang == 'ta' %}ஏன் மேட்ரோமணியை தேர்ந்தெடுக்க வேண்டும்?{% else %}Why Thousands Choose Matromani{% endif %}
+            </h2>
+            <p class="text-muted">
+                {% if current_lang == 'ta' %}பாதுகாப்பு, கலாச்சார பாரம்பரியம் மற்றும் துல்லியமான ஜாதகப் பொருத்தம்{% else %}Security, Cultural Tradition & Precise Astrology Compatibility{% endif %}
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6 text-center">
+                <div class="p-3">
+                    <div class="income-cat-icon mb-3 bg-danger bg-opacity-10 text-danger border-danger">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4 class="h5 fw-bold">{{ t('feature_verified_title') }}</h4>
+                    <p class="small text-muted">{{ t('feature_verified_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center">
+                <div class="p-3">
+                    <div class="income-cat-icon mb-3 bg-warning bg-opacity-10 text-warning border-warning">
+                        <i class="bi bi-eye-slash"></i>
+                    </div>
+                    <h4 class="h5 fw-bold">{{ t('feature_privacy_title') }}</h4>
+                    <p class="small text-muted">{{ t('feature_privacy_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center">
+                <div class="p-3">
+                    <div class="income-cat-icon mb-3 bg-primary bg-opacity-10 text-primary border-primary">
+                        <i class="bi bi-moon-stars"></i>
+                    </div>
+                    <h4 class="h5 fw-bold">{{ t('feature_horoscope_title') }}</h4>
+                    <p class="small text-muted">{{ t('feature_horoscope_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center">
+                <div class="p-3">
+                    <div class="income-cat-icon mb-3 bg-success bg-opacity-10 text-success border-success">
+                        <i class="bi bi-globe-asia-australia"></i>
+                    </div>
+                    <h4 class="h5 fw-bold">{{ t('feature_tamil_title') }}</h4>
+                    <p class="small text-muted">{{ t('feature_tamil_desc') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works (4 Steps) -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-danger">{{ t('how_it_works_title') }}</h2>
+            <p class="text-muted">
+                {% if current_lang == 'ta' %}எளிய 4 படிகளில் உங்கள் வாழ்க்கைத் துணையை கண்டறியுங்கள்{% else %}Simple 4 steps to find your compatible life partner{% endif %}
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="fs-1 text-danger mb-3"><i class="bi bi-person-vcard"></i></div>
+                    <h4 class="h5 fw-bold">{{ t('how_step_1_title') }}</h4>
+                    <p class="small text-muted">{{ t('how_step_1_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="fs-1 text-danger mb-3"><i class="bi bi-sliders2"></i></div>
+                    <h4 class="h5 fw-bold">{{ t('how_step_2_title') }}</h4>
+                    <p class="small text-muted">{{ t('how_step_2_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="fs-1 text-danger mb-3"><i class="bi bi-search-heart"></i></div>
+                    <h4 class="h5 fw-bold">{{ t('how_step_3_title') }}</h4>
+                    <p class="small text-muted">{{ t('how_step_3_desc') }}</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="fs-1 text-danger mb-3"><i class="bi bi-chat-heart"></i></div>
+                    <h4 class="h5 fw-bold">{{ t('how_step_4_title') }}</h4>
+                    <p class="small text-muted">{{ t('how_step_4_desc') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5 text-white" style="background: var(--burgundy-gradient);">
+    <div class="container text-center py-4">
+        <h2 class="display-6 fw-bold mb-3">
+            {% if current_lang == 'ta' %}இன்றே உங்கள் பொருத்தமான துணையைத் தேடத் தொடங்குங்கள்!{% else %}Begin Your Journey Towards a Blessed Union Today!{% endif %}
+        </h2>
+        <p class="lead text-light mb-4">
+            {% if current_lang == 'ta' %}இலவசமாக பதிவு செய்து ஆயிரக்கணக்கான உண்மையான வரன்களைக் கண்டறியுங்கள்.{% else %}Register free and connect with verified Tamil brides & grooms worldwide.{% endif %}
+        </p>
+        <a href="{{ url_for('register.wizard') }}" class="btn btn-gold px-5 py-3 fs-5">
+            <i class="bi bi-person-plus-fill me-2"></i> {{ t('btn_register_free') }}
+        </a>
+    </div>
+</section>
+{% endblock %}

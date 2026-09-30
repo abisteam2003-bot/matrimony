@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Profiles | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark m-0">Manage Profiles</h1>
+            <p class="text-muted small m-0">Review, verify and filter matrimony registrations</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="mb-3 d-flex gap-2">
+        <a href="{{ url_for('admin.profiles_list', status='all') }}" class="btn btn-sm {% if current_status == 'all' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            All ({{ profiles|length }})
+        </a>
+        <a href="{{ url_for('admin.profiles_list', status='pending') }}" class="btn btn-sm {% if current_status == 'pending' %}btn-warning text-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            Pending
+        </a>
+        <a href="{{ url_for('admin.profiles_list', status='approved') }}" class="btn btn-sm {% if current_status == 'approved' %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            Approved
+        </a>
+        <a href="{{ url_for('admin.profiles_list', status='rejected') }}" class="btn btn-sm {% if current_status == 'rejected' %}btn-danger{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            Rejected
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle small">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Community</th>
+                        <th>Income Bracket</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in profiles %}
+                    <tr>
+                        <td><strong>{{ p.profile_id }}</strong></td>
+                        <td>
+                            <img src="{{ p.primary_photo }}" class="rounded-circle shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ p.full_name }}</div>
+                            <div class="text-muted small">{{ p.user.email if p.user else '' }}</div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ p.gender }}</span></td>
+                        <td>{{ p.personal_details.community if p.personal_details else '-' }}</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                {{ p.income_details.income_category if p.income_details else '-' }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if p.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif p.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ p.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ url_for('profile.view_profile', profile_id=p.profile_id) }}" class="btn btn-outline-secondary btn-sm" target="_blank" title="View Full Profile">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if p.status != 'approved' %}
+                                <form method="POST" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" class="d-inline">
+                                    <button class="btn btn-success btn-sm" title="Approve Profile"><i class="bi bi-check2"></i> Approve</button>
+                                </form>
+                                {% endif %}
+                                {% if p.status != 'rejected' %}
+                                <form method="POST" action="{{ url_for('admin.reject_profile', profile_id=p.id) }}" class="d-inline">
+                                    <button class="btn btn-outline-danger btn-sm" title="Reject Profile"><i class="bi bi-x"></i> Reject</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

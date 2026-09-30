@@ -1,0 +1,684 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('reg_wizard_title') }} | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Resume Banner (Shown dynamically if previous registration detected) -->
+            <div id="resume-alert-banner" class="alert alert-warning alert-dismissible fade show rounded-4 shadow-sm mb-4" style="display: none;" role="alert">
+                <i class="bi bi-clock-history fs-5 me-2"></i>
+                <strong>{{ t('resume_notice') }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Wizard Main Container -->
+            <div class="wizard-container">
+                
+                <!-- Wizard Header & Autosave Badge -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h1 class="h3 fw-bold text-danger m-0">{{ t('reg_wizard_title') }}</h1>
+                        <p class="text-muted small m-0">{{ t('reg_wizard_subtitle') }}</p>
+                    </div>
+                    <div>
+                        <span id="autosave-status-badge" class="badge bg-success bg-opacity-10 text-success fw-bold p-2 rounded-pill" style="display: none;">
+                            <i class="bi bi-cloud-check-fill me-1"></i> {{ t('autosave_badge') }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 8-Step Visual Indicator -->
+                <div class="wizard-progress-bar-wrap">
+                    <div class="wizard-progress-active-line"></div>
+                    <div class="wizard-steps-indicator">
+                        {% for step_num in range(1, 9) %}
+                        <div class="step-indicator-item" data-step="{{ step_num }}">
+                            <div class="step-circle">{{ step_num }}</div>
+                            <span class="step-title-text">{{ t('step_' ~ step_num ~ '_title') }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <form id="wizard-form" enctype="multipart/form-data">
+                    
+                    <!-- ==========================================
+                         STEP 1: Basic Details
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-1">
+                        <div class="step-header">
+                            <h2>{{ t('step_1_title') }}</h2>
+                            <p>{{ t('step_progress', current=1, total=8) }}</p>
+                        </div>
+
+                        <!-- Profile Type Radio -->
+                        <div class="mb-4">
+                            <label class="form-label">{{ t('profile_type') }} <span class="text-danger">*</span></label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="profile_type" id="p-type-bride" value="bride" checked>
+                                    <label class="btn btn-outline-danger w-100 p-3 fw-bold rounded-4" for="p-type-bride">
+                                        <i class="bi bi-gender-female fs-4 d-block mb-1"></i>
+                                        {{ t('bride') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="profile_type" id="p-type-groom" value="groom">
+                                    <label class="btn btn-outline-danger w-100 p-3 fw-bold rounded-4" for="p-type-groom">
+                                        <i class="bi bi-gender-male fs-4 d-block mb-1"></i>
+                                        {{ t('groom') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Created For -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('profile_created_for') }} <span class="text-danger">*</span></label>
+                            <select name="profile_created_for" class="form-select" required>
+                                <option value="Self">{{ t('created_for_self') }} (Self)</option>
+                                <option value="Son">{{ t('created_for_son') }} (Son)</option>
+                                <option value="Daughter">{{ t('created_for_daughter') }} (Daughter)</option>
+                                <option value="Brother">{{ t('created_for_brother') }} (Brother)</option>
+                                <option value="Sister">{{ t('created_for_sister') }} (Sister)</option>
+                                <option value="Relative">{{ t('created_for_relative') }} (Relative)</option>
+                                <option value="Friend">{{ t('created_for_friend') }} (Friend)</option>
+                            </select>
+                        </div>
+
+                        <!-- First & Last Name -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('first_name') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="first_name" class="form-control" placeholder="e.g. Priya / கார்த்திக்" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('last_name') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="last_name" class="form-control" placeholder="e.g. Ramanathan" required>
+                            </div>
+                        </div>
+
+                        <!-- Marital Status -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('marital_status') }} <span class="text-danger">*</span></label>
+                            <select name="marital_status" class="form-select" required>
+                                <option value="Never Married" selected>{{ t('never_married') }}</option>
+                                <option value="Divorced">{{ t('divorced') }}</option>
+                                <option value="Widowed">{{ t('widowed') }}</option>
+                                <option value="Separated">{{ t('separated') }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Email & Mobile -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('email') }} <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" placeholder="user@example.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('mobile') }} <span class="text-danger">*</span></label>
+                                <input type="tel" name="mobile" class="form-control" placeholder="9840012345" required>
+                            </div>
+                        </div>
+
+                        <!-- Password & Confirm Password -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('password') }} <span class="text-danger">*</span></label>
+                                <input type="password" id="field-password" name="password" class="form-control" placeholder="Minimum 6 characters" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('confirm_password') }} <span class="text-danger">*</span></label>
+                                <input type="password" id="field-confirm-password" name="confirm_password" class="form-control" placeholder="Re-enter password" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="1">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 2: Personal & Birth Details
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-2">
+                        <div class="step-header">
+                            <h2>{{ t('step_2_title') }}</h2>
+                            <p>{{ t('step_progress', current=2, total=8) }}</p>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('date_of_birth') }} <span class="text-danger">*</span></label>
+                                <input type="date" name="date_of_birth" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('time_of_birth') }}</label>
+                                <input type="time" name="time_of_birth" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('birth_city') }}</label>
+                                <input type="text" name="birth_city" class="form-control" placeholder="e.g. Chennai, Madurai">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label">{{ t('height') }}</label>
+                                <select name="height" class="form-select">
+                                    <option value="5 ft 0 in">5 ft 0 in (152 cm)</option>
+                                    <option value="5 ft 2 in">5 ft 2 in (157 cm)</option>
+                                    <option value="5 ft 4 in" selected>5 ft 4 in (163 cm)</option>
+                                    <option value="5 ft 6 in">5 ft 6 in (168 cm)</option>
+                                    <option value="5 ft 8 in">5 ft 8 in (173 cm)</option>
+                                    <option value="5 ft 10 in">5 ft 10 in (178 cm)</option>
+                                    <option value="6 ft 0 in">6 ft 0 in (183 cm)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label">{{ t('weight') }}</label>
+                                <input type="number" name="weight" class="form-control" placeholder="e.g. 60">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('blood_group') }}</label>
+                                <select name="blood_group" class="form-select">
+                                    <option value="O+">O+</option>
+                                    <option value="A+">A+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('mother_tongue') }}</label>
+                                <input type="text" name="mother_tongue" class="form-control" value="Tamil" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('religion') }}</label>
+                                <input type="text" name="religion" class="form-control" value="Hindu" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('community_caste') }}</label>
+                                <input type="text" name="community" class="form-control" placeholder="e.g. Mudaliar, Chettiar, Brahmin, Nadar, etc.">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('gothram') }}</label>
+                                <input type="text" name="gothram" class="form-control" placeholder="e.g. Siva, Koushika">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="1">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="2">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 3: Address Details
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-3">
+                        <div class="step-header">
+                            <h2>{{ t('step_3_title') }}</h2>
+                            <p>{{ t('step_progress', current=3, total=8) }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('address_1') }} <span class="text-danger">*</span></label>
+                            <input type="text" name="address_1" class="form-control" placeholder="Door No, Street Name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('address_2') }}</label>
+                            <input type="text" name="address_2" class="form-control" placeholder="Apartment / Area Landmark">
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('city') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="city" class="form-control" placeholder="e.g. Chennai" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('district') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="district" class="form-control" placeholder="e.g. Chennai" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('state') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="state" class="form-control" value="Tamil Nadu" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('country') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="country" class="form-control" value="India" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('pincode') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="pincode" class="form-control" placeholder="e.g. 600020" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="2">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="3">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 4: Education, Career & Income
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-4">
+                        <div class="step-header">
+                            <h2>{{ t('step_4_title') }}</h2>
+                            <p>{{ t('step_progress', current=4, total=8) }}</p>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('qualification') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="qualification" class="form-control" placeholder="e.g. B.Tech / MBBS / CA / MBA" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('qualification_details') }}</label>
+                                <input type="text" name="qualification_details" class="form-control" placeholder="College / University Name">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('job') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="job" class="form-control" placeholder="e.g. Software Engineer, Doctor, Architect" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('company') }}</label>
+                                <input type="text" name="company" class="form-control" placeholder="e.g. TCS, Amazon, Apollo">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('working_place') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="working_place" class="form-control" placeholder="e.g. Chennai, Bangalore, Singapore" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('employment_type') }}</label>
+                                <select name="employment_type" class="form-select">
+                                    <option value="Private Sector" selected>Private Sector</option>
+                                    <option value="Government / PSU">Government / PSU</option>
+                                    <option value="Business / Entrepreneur">Business / Entrepreneur</option>
+                                    <option value="Self Employed / Professional">Self Employed / Professional</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Income Engine Section with Automatic Category Highlight -->
+                        <div class="p-3 bg-light rounded-4 border mb-4">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">{{ t('income') }} <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white fw-bold">₹</span>
+                                        <input type="number" id="field-annual-income" name="income" class="form-control" placeholder="e.g. 1200000" required>
+                                    </div>
+                                    <div class="form-text small">{{ t('income_category_detected') }}</div>
+                                </div>
+                                <div class="col-md-6 text-center text-md-start">
+                                    <div id="calculated-category-badge" class="mt-2">
+                                        <span class="badge bg-secondary px-3 py-2 fs-6">
+                                            <i class="bi bi-tag-fill me-1"></i> ₹1L+ / ₹1 லட்சம்+
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Privacy Requirement Checkbox -->
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" name="hide_exact_income" id="check-hide-income" value="true" checked>
+                                <label class="form-check-label fw-semibold text-danger" for="check-hide-income">
+                                    <i class="bi bi-shield-lock me-1"></i> {{ t('hide_income_privacy_label') }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="3">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="4">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 5: Family Details
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-5">
+                        <div class="step-header">
+                            <h2>{{ t('step_5_title') }}</h2>
+                            <p>{{ t('step_progress', current=5, total=8) }}</p>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('father_name') }}</label>
+                                <input type="text" name="father_name" class="form-control" placeholder="e.g. Sundaram K">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('father_occupation') }}</label>
+                                <input type="text" name="father_occupation" class="form-control" placeholder="e.g. Retired Officer, Business">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('mother_name') }}</label>
+                                <input type="text" name="mother_name" class="form-control" placeholder="e.g. Lakshmi Sundaram">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('mother_occupation') }}</label>
+                                <input type="text" name="mother_occupation" class="form-control" placeholder="e.g. Homemaker, Teacher">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3 col-6">
+                                <label class="form-label">{{ t('brothers') }}</label>
+                                <input type="number" name="brothers" class="form-control" value="0" min="0">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label">{{ t('sisters') }}</label>
+                                <input type="number" name="sisters" class="form-control" value="0" min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('family_type') }}</label>
+                                <select name="family_type" class="form-select">
+                                    <option value="Nuclear" selected>{{ t('nuclear_family') }}</option>
+                                    <option value="Joint">{{ t('joint_family') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('family_status') }}</label>
+                                <select name="family_status" class="form-select">
+                                    <option value="Middle Class" selected>{{ t('middle_class') }}</option>
+                                    <option value="Upper Middle Class">{{ t('upper_middle_class') }}</option>
+                                    <option value="Rich / Affluent">{{ t('rich_affluent') }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('family_values') }}</label>
+                                <select name="family_values" class="form-select">
+                                    <option value="Traditional" selected>{{ t('traditional') }}</option>
+                                    <option value="Moderate">{{ t('moderate') }}</option>
+                                    <option value="Liberal">{{ t('liberal') }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ t('poorvigam') }}</label>
+                                <input type="text" name="poorvigam" class="form-control" placeholder="e.g. Thanjavur, Madurai">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="4">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="5">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 6: Horoscope Details
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-6">
+                        <div class="step-header">
+                            <h2>{{ t('step_6_title') }}</h2>
+                            <p>{{ t('step_progress', current=6, total=8) }}</p>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('rasi') }}</label>
+                                <select name="rasi" class="form-select">
+                                    <option value="">{{ t('rasi') }} (Select)</option>
+                                    {% for r in rasi_list %}
+                                        <option value="{{ r.en }}">{{ r.en }} / {{ r.ta }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('nakshatra') }}</label>
+                                <select name="nakshatra" class="form-select">
+                                    <option value="">{{ t('nakshatra') }} (Select)</option>
+                                    {% for n in nakshatra_list %}
+                                        <option value="{{ n.en }}">{{ n.en }} / {{ n.ta }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('lagnam') }}</label>
+                                <input type="text" name="lagnam" class="form-control" placeholder="e.g. Mesham / மிதுனம்">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t('dosham') }}</label>
+                                <select name="dosham" class="form-select">
+                                    <option value="No Dosham" selected>{{ t('no_dosham') }}</option>
+                                    <option value="Chevvai Dosham">{{ t('chevvai_dosham') }}</option>
+                                    <option value="Rahu-Ketu Dosham">{{ t('rahu_ketu_dosham') }}</option>
+                                    <option value="Don't Know">{{ t('dont_know_dosham') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Jathagam Photo Upload -->
+                        <div class="p-3 bg-light rounded-4 border mb-4">
+                            <label class="form-label fw-bold">{{ t('jathagam_photo') }}</label>
+                            <input type="file" id="field-jathagam-photo" name="jathagam_photo" class="form-control" accept="image/jpeg,image/png,image/jpg">
+                            <div class="form-text small">{{ t('jathagam_photo_hint') }}</div>
+                            <div id="jathagam-photo-preview" class="mt-2"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="5">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="6">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 7: Profile Photos
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-7">
+                        <div class="step-header">
+                            <h2>{{ t('step_7_title') }}</h2>
+                            <p>{{ t('step_progress', current=7, total=8) }}</p>
+                        </div>
+
+                        <div class="alert alert-info rounded-4 border-0 small mb-4">
+                            <i class="bi bi-camera-fill me-2"></i> {{ t('photo_guidelines') }}
+                        </div>
+
+                        <!-- Main Profile Photo (Required) -->
+                        <div class="card p-4 border rounded-4 mb-4">
+                            <div class="row align-items-center g-3">
+                                <div class="col-md-3 text-center">
+                                    <div id="profile-photo-preview" class="mx-auto">
+                                        <div class="d-flex align-items-center justify-content-center bg-light rounded-circle border mx-auto shadow-sm" style="width: 120px; height: 120px;">
+                                            <i class="bi bi-person-fill display-3 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label fw-bold">{{ t('profile_photo') }} <span class="text-danger">*</span></label>
+                                    <input type="file" id="field-profile-photo" name="profile_photo" class="form-control" accept="image/jpeg,image/png,image/jpg">
+                                    <div class="form-text small text-danger">{{ t('profile_photo_required') }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Photos -->
+                        <div class="mb-4">
+                            <label class="form-label">{{ t('additional_photos') }}</label>
+                            <input type="file" name="additional_photos" class="form-control" accept="image/jpeg,image/png,image/jpg" multiple>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="6">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" class="btn btn-premium-primary px-5 btn-wizard-next" data-step="7">
+                                {{ t('btn_continue') }} <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                         STEP 8: Review & Submit Profile
+                         ========================================== -->
+                    <div class="wizard-step-panel" id="step-panel-8">
+                        <div class="step-header">
+                            <h2>{{ t('review_title') }}</h2>
+                            <p>{{ t('review_subtitle') }}</p>
+                        </div>
+
+                        <!-- Review Sections with Edit Jump Buttons -->
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-person-badge text-danger me-2"></i> {{ t('step_1_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(1)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-6 col-md-4"><strong>Name:</strong> <span id="review-name">-</span></div>
+                                <div class="col-6 col-md-4"><strong>Created For:</strong> <span id="review-profile-for">-</span></div>
+                                <div class="col-6 col-md-4"><strong>Status:</strong> <span id="review-marital-status">-</span></div>
+                                <div class="col-6 col-md-6"><strong>Email:</strong> <span id="review-email">-</span></div>
+                                <div class="col-6 col-md-6"><strong>Mobile:</strong> <span id="review-mobile">-</span></div>
+                            </div>
+                        </div>
+
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-calendar-event text-danger me-2"></i> {{ t('step_2_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(2)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-6 col-md-4"><strong>DOB:</strong> <span id="review-dob">-</span></div>
+                                <div class="col-6 col-md-4"><strong>Height:</strong> <span id="review-height">-</span></div>
+                                <div class="col-6 col-md-4"><strong>Community:</strong> <span id="review-religion-community">-</span></div>
+                            </div>
+                        </div>
+
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-geo-alt text-danger me-2"></i> {{ t('step_3_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(3)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="small">
+                                <strong>Location:</strong> <span id="review-location">-</span>
+                            </div>
+                        </div>
+
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-briefcase text-danger me-2"></i> {{ t('step_4_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(4)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-md-6"><strong>Qualification:</strong> <span id="review-education">-</span></div>
+                                <div class="col-md-6"><strong>Occupation:</strong> <span id="review-job">-</span></div>
+                            </div>
+                        </div>
+
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-people text-danger me-2"></i> {{ t('step_5_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(5)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="small">
+                                <span id="review-family">-</span>
+                            </div>
+                        </div>
+
+                        <div class="review-section-card">
+                            <div class="review-section-header">
+                                <h4><i class="bi bi-moon-stars text-danger me-2"></i> {{ t('step_6_title') }}</h4>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="goToStep(6)">
+                                    <i class="bi bi-pencil-square"></i> {{ t('btn_edit') }}
+                                </button>
+                            </div>
+                            <div class="small">
+                                <span id="review-horoscope">-</span>
+                            </div>
+                        </div>
+
+                        <!-- About Me / Personal Note -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                {% if current_lang == 'ta' %}உங்களைப் பற்றி சில வரிகள் (சுயவிவர குறிப்பு){% else %}About Yourself / Partner Expectations{% endif %}
+                            </label>
+                            <textarea name="about_me" class="form-control" rows="3" placeholder="Share a few words about your values, interests and expectations..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4 btn-wizard-prev" data-step="7">
+                                <i class="bi bi-arrow-left"></i> {{ t('btn_previous') }}
+                            </button>
+                            <button type="button" id="btn-final-submit" class="btn btn-gold px-5 py-3 fs-6">
+                                <i class="bi bi-check-circle-fill me-2"></i> {{ t('btn_submit_profile') }}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/register_wizard.js') }}"></script>
+{% endblock %}

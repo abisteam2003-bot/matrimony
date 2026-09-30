@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgG1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B3B6F" />
+      <stop offset="100%" stop-color="#061A40" />
+    </linearGradient>
+    <linearGradient id="goldG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE08B" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA771C" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bgG1)" rx="100"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldG)" stroke-width="3"/>
+  <g>
+    <circle cx="100" cy="74" r="34" fill="#E8B88A"/>
+    <!-- Modern neat hairstyle -->
+    <path d="M66 70 C 65 30, 135 30, 134 70 C 130 50, 70 50, 66 70 Z" fill="#1C1C1C"/>
+    <!-- Glasses -->
+    <circle cx="88" cy="73" r="10" fill="none" stroke="#D4AF37" stroke-width="1.8"/>
+    <circle cx="112" cy="73" r="10" fill="none" stroke="#D4AF37" stroke-width="1.8"/>
+    <line x1="98" y1="73" x2="102" y2="73" stroke="#D4AF37" stroke-width="2"/>
+    <!-- Suit / Modern professional blazer -->
+    <path d="M42 178 C 42 130, 70 120, 100 120 C 130 120, 158 130, 158 178 Z" fill="#0C2340"/>
+    <!-- White shirt & Tie -->
+    <polygon points="100,120 85,150 115,150" fill="#FFFFFF"/>
+    <polygon points="100,132 94,178 106,178" fill="#800020"/>
+  </g>
+</svg>

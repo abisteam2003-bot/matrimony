@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Interests | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="h3 fw-bold text-danger mb-4">Interests & Communications</h1>
+
+    <ul class="nav nav-pills mb-4 gap-2" id="interestTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill px-4" id="received-tab" data-bs-toggle="pill" data-bs-target="#received-pane" type="button" role="tab">
+                <i class="bi bi-inbox-fill me-1"></i> {{ t('dash_interest_received') }} ({{ received|length }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4" id="sent-tab" data-bs-toggle="pill" data-bs-target="#sent-pane" type="button" role="tab">
+                <i class="bi bi-send-fill me-1"></i> {{ t('dash_interest_sent') }} ({{ sent|length }})
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="interestTabsContent">
+        <!-- Received Pane -->
+        <div class="tab-pane fade show active" id="received-pane" role="tabpanel">
+            {% if received %}
+                <div class="row g-3">
+                    {% for it in received %}
+                        {% set sender_profile = it.sender.profile if it.sender else None %}
+                        {% if sender_profile %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white d-flex flex-row align-items-center gap-3">
+                                <img src="{{ sender_profile.primary_photo }}" class="rounded-circle shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="h6 fw-bold m-0">{{ sender_profile.full_name }}</h5>
+                                    <div class="small text-muted">{{ sender_profile.age }} Yrs, {{ sender_profile.address.city if sender_profile.address else '' }}</div>
+                                    <div class="badge bg-light text-dark border small mt-1">Status: <strong class="text-capitalize">{{ it.status }}</strong></div>
+                                </div>
+                                <div class="d-flex flex-column gap-1">
+                                    {% if it.status == 'pending' %}
+                                        <button class="btn btn-success btn-sm btn-respond-interest" data-id="{{ it.id }}" data-action="accept">Accept</button>
+                                        <button class="btn btn-outline-danger btn-sm btn-respond-interest" data-id="{{ it.id }}" data-action="decline">Decline</button>
+                                    {% else %}
+                                        <a href="{{ url_for('profile.view_profile', profile_id=sender_profile.profile_id) }}" class="btn btn-premium-primary btn-sm">View Profile</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-3">
+                    <i class="bi bi-inbox fs-1 text-muted mb-2"></i>
+                    <p class="text-muted m-0">No interests received yet.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sent Pane -->
+        <div class="tab-pane fade" id="sent-pane" role="tabpanel">
+            {% if sent %}
+                <div class="row g-3">
+                    {% for it in sent %}
+                        {% set receiver_profile = it.receiver.profile if it.receiver else None %}
+                        {% if receiver_profile %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white d-flex flex-row align-items-center gap-3">
+                                <img src="{{ receiver_profile.primary_photo }}" class="rounded-circle shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="h6 fw-bold m-0">{{ receiver_profile.full_name }}</h5>
+                                    <div class="small text-muted">{{ receiver_profile.age }} Yrs, {{ receiver_profile.address.city if receiver_profile.address else '' }}</div>
+                                    <div class="badge bg-light text-dark border small mt-1">Status: <strong class="text-capitalize">{{ it.status }}</strong></div>
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('profile.view_profile', profile_id=receiver_profile.profile_id) }}" class="btn btn-premium-secondary btn-sm">
+                                        View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-3">
+                    <i class="bi bi-send fs-1 text-muted mb-2"></i>
+                    <p class="text-muted m-0">You haven't sent any interests yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.btn-respond-interest').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const id = this.getAttribute('data-id');
+        const action = this.getAttribute('data-action');
+        try {
+            const res = await fetch('/api/interest/respond', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ interest_id: id, action: action })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            }
+        } catch(e) {
+            showToast('Error responding to interest', 'danger');
+        }
+    });
+});
+</script>
+{% endblock %}

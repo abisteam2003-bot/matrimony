@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark m-0">{{ t('admin_title') }}</h1>
+            <p class="text-muted small m-0">Platform overview & verification pipeline</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.profiles_list') }}" class="btn btn-dark btn-sm">
+                <i class="bi bi-people-fill me-1"></i> Manage Profiles
+            </a>
+            <a href="{{ url_for('admin.logout') }}" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Stats Grid -->
+    <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center border-top border-4 border-primary">
+                <div class="display-6 fw-bold text-primary">{{ total_users }}</div>
+                <div class="small text-muted">{{ t('admin_stats_total_users') }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center border-top border-4 border-info">
+                <div class="display-6 fw-bold text-info">{{ total_profiles }}</div>
+                <div class="small text-muted">Total Profiles</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center border-top border-4 border-warning">
+                <div class="display-6 fw-bold text-warning">{{ pending_profiles }}</div>
+                <div class="small text-muted">{{ t('admin_stats_pending_approval') }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center border-top border-4 border-success">
+                <div class="display-6 fw-bold text-success">{{ approved_profiles }}</div>
+                <div class="small text-muted">{{ t('admin_stats_approved') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Profiles Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h5 class="fw-bold mb-3 border-bottom pb-2">Recent Profile Submissions</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Profile ID</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Income Bracket</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in recent_profiles %}
+                    <tr>
+                        <td><strong>{{ p.profile_id }}</strong></td>
+                        <td>{{ p.full_name }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ p.gender }}</span></td>
+                        <td><span class="badge bg-warning text-dark">{{ p.income_details.income_category if p.income_details else '-' }}</span></td>
+                        <td>
+                            {% if p.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif p.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ p.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ p.created_at.strftime('%d-%b-%Y') }}</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ url_for('profile.view_profile', profile_id=p.profile_id) }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if p.status != 'approved' %}
+                                <form method="POST" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" class="d-inline">
+                                    <button class="btn btn-success btn-sm" title="Approve"><i class="bi bi-check2"></i></button>
+                                </form>
+                                {% endif %}
+                                {% if p.status != 'rejected' %}
+                                <form method="POST" action="{{ url_for('admin.reject_profile', profile_id=p.id) }}" class="d-inline">
+                                    <button class="btn btn-danger btn-sm" title="Reject"><i class="bi bi-x"></i></button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

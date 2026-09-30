@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('nav_about') }} | {{ t('nav_brand') }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center g-5 mb-5">
+        <div class="col-lg-6">
+            <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-2 rounded-pill mb-3">
+                About Matromani
+            </span>
+            <h1 class="display-5 fw-bold text-danger mb-4">
+                {% if current_lang == 'ta' %}தமிழ் கலாச்சாரத்தின் தூய பந்தம்{% else %}Connecting Tamil Hearts with Honor & Culture{% endif %}
+            </h1>
+            <p class="text-secondary leading-relaxed">
+                {% if current_lang == 'ta' %}
+                மேட்ரோமணி என்பது நவீன தொழில்நுட்பத்தையும், பாரம்பரிய தமிழ் கலாச்சார விழுமியங்களையும் ஒன்றிணைத்து உருவாக்கப்பட்ட உயர்தர திருமண தளமாகும். எங்கள் தளத்தில் உள்ள ஒவ்வொரு சுயவிவரமும் முழுமையான அடையாள சரிபார்ப்பு மற்றும் தனியுரிமை பாதுகாப்புடன் நிர்வகிக்கப்படுகிறது.
+                {% else %}
+                Matromani was founded with a singular noble mission: to provide the global Tamil community with an authentic, verified, and dignified matrimonial experience. Combining cutting-edge privacy engineering with deep respect for Vedic traditions, we empower families and individuals to connect meaningfully.
+                {% endif %}
+            </p>
+            <div class="row g-3 mt-3">
+                <div class="col-6">
+                    <div class="border-start border-3 border-danger ps-3">
+                        <div class="h3 fw-bold text-dark m-0">100%</div>
+                        <div class="small text-muted">ID & Mobile Verified</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="border-start border-3 border-warning ps-3">
+                        <div class="h3 fw-bold text-dark m-0">8 Brackets</div>
+                        <div class="small text-muted">Transparent Income Categories</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="card border-0 shadow-lg rounded-4 p-5 bg-white border-top border-4 border-warning">
+                <i class="bi bi-shield-heart display-1 text-danger mb-3"></i>
+                <h3 class="h4 fw-bold">Our Core Commitments</h3>
+                <ul class="list-unstyled text-start mt-3 small text-muted">
+                    <li class="mb-2"><i class="bi bi-check2 text-danger me-2"></i> Zero spam, strictly human-reviewed profiles</li>
+                    <li class="mb-2"><i class="bi bi-check2 text-danger me-2"></i> Private income categorized by standardized tiers</li>
+                    <li class="mb-2"><i class="bi bi-check2 text-danger me-2"></i> Authentic Vedic horoscope matching with Rasi grid</li>
+                    <li class="mb-2"><i class="bi bi-check2 text-danger me-2"></i> 100% Bilingual Tamil & English interface</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
